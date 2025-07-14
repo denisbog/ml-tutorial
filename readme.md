@@ -87,3 +87,11 @@ micro_batch (correction for the number of processed tokens)
 47, loss: 6.397924, dt: 0.82278s, tok/sec: 9956.527767217158, norm: 1.4759, lr 6.7460e-05
 48, loss: 6.340064, dt: 0.82266s, tok/sec: 9957.94456953153, norm: 1.3604, lr 6.3324e-05
 49, loss: 6.231693, dt: 0.82237s, tok/sec: 9961.440688098422, norm: 1.0566, lr 6.0832e-05
+
+ddp, one node
+44, loss: 6.359593, dt: 0.82056s, tok/sec: 9983.420413286534, norm: 1.0339, lr 8.9428e-05
+45, loss: 6.376564, dt: 0.82022s, tok/sec: 9987.60503430286, norm: 0.9846, lr 8.0553e-05
+46, loss: 6.469541, dt: 0.82018s, tok/sec: 9988.023108670868, norm: 1.3411, lr 7.3215e-05
+47, loss: 6.397961, dt: 0.82089s, tok/sec: 9979.445081702246, norm: 1.4769, lr 6.7460e-05
+48, loss: 6.340087, dt: 0.82049s, tok/sec: 9984.247192780835, norm: 1.3617, lr 6.3324e-05
+49, loss: 6.231664, dt: 0.82240s, tok/sec: 9961.07970344979, norm: 1.0567, lr 6.0832e-05
