@@ -373,8 +373,17 @@ for step in range(max_steps):
                 print(f'validation loss: {val_loss_accum.item():.4f}')
                 with open(log_file, 'a') as f:
                     f.write(f'{step} val {val_loss_accum.item():.4f}\n')
+                if (step > 0 and step % 100 == 0) or last_step:
+                    checkpoint_path = os.path.join(log_dir, f'model_{step:06d}.pt')
+                    checkpoint = {
+                        'model': raw_model.state_dict(),
+                        'config': raw_model.config,
+                        'step': step,
+                        'val_loss': val_loss_accum.item()
+                    }
+                    torch.save(checkpoint, checkpoint_path)
 
-    if (step % 100 == 0 or last_step):
+    if  (step > 0 and step % 100 == 0) or last_step:
         model.eval()
         num_correct_norm = 0
         num_total = 0
