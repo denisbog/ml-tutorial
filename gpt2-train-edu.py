@@ -240,7 +240,7 @@ class DataLoaderLite:
     def reset(self):
         self.current_shard = 0
         self.tokens = load_tokens(self.shards[self.current_shard])
-        self.current_position = self.B * self.T * self.process_rank        
+        self.current_position = self.B * self.T * self.process_rank
 
     def next_batch(self):
         B, T = self.B, self.T
@@ -467,7 +467,7 @@ for step in range(max_steps):
     tokens_processed = train_loader.B *  train_loader.T * grad_accum_steps * ddp_world_size
     tokens_per_sec = tokens_processed / dt
     if master_process:
-        print(f"{step}, loss: {loss_accum:.6f}, dt: {dt:.5f}s, tok/sec: {tokens_per_sec}, norm: {norm:.4f}, lr {lr:.4e}")
+        print(f"{step}, loss: {loss_accum:.6f}, dt: {dt:.5f}s, tok/sec: {tokens_per_sec:.4f}, norm: {norm:.4f}, lr {lr:.4e}")
         with open(log_file, 'a') as f:
             f.write(f'{step} train {loss_accum.item():.6f}\n')
 if ddp:
