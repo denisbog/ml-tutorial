@@ -275,7 +275,7 @@ else:
         device = 'mps'
     print(f'using device: {device}')
 
-B, T = 1, 1024
+B, T = 52, 1024
 
 total_batch_size = B * T
 
@@ -378,7 +378,7 @@ for step in range(max_steps):
                     }
                     torch.save(checkpoint, checkpoint_path)
 
-    if  (step > 0 and step % 1000 == 0) or last_step:
+    if  (step > 0 and step % 100000 == 0) or last_step:
         model.eval()
         num_correct_norm = 0
         num_total = 0
