@@ -193,13 +193,6 @@ class GPT(nn.Module):
         optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=(0.9, 0.95), eps=1e-8, fused=use_fused)
         return optimizer
 
-device = 'cpu'
-if torch.cuda.is_available():
-    device = 'cuda'
-elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-    device = 'mps'
-print(f'using device: {device}')
-
 torch.manual_seed(1337)
 if torch.cuda.is_available():
     torch.cuda.manual_seed(1337)
@@ -282,9 +275,9 @@ else:
         device = 'mps'
     print(f'using device: {device}')
 
-B, T = 4, 256
+B, T = 1, 1024
 
-total_batch_size = 32 * 256
+total_batch_size = B * T
 
 assert total_batch_size % (B * T * ddp_world_size) == 0, 'make sure total_batch_size is divisible by B * T * ddp_world_size'
 grad_accum_steps = total_batch_size // (B * T * ddp_world_size)
@@ -292,7 +285,9 @@ if master_process:
     print(f'total desired batch size: {total_batch_size}')
     print(f'=> calculated gradient accumulation steps: {grad_accum_steps}')
 
-model = GPT(GPTConfig(vocab_size=50304))
+#model = GPT(GPTConfig(vocab_size=50304))
+model = GPT.from_pretrained('gpt2')
+
 model.to(device)
 model = torch.compile(model)
 
@@ -354,7 +349,7 @@ for step in range(max_steps):
     t0 = time.time()
     last_step = (step == max_steps - 1)
 
-    if step % 10 == 0 or last_step:
+    if step % 1000 == 0 or last_step:
         model.eval()
         val_loader.reset()
         with torch.no_grad():
@@ -373,7 +368,7 @@ for step in range(max_steps):
                 print(f'validation loss: {val_loss_accum.item():.4f}')
                 with open(log_file, 'a') as f:
                     f.write(f'{step} val {val_loss_accum.item():.4f}\n')
-                if (step > 0 and step % 100 == 0) or last_step:
+                if (step > 0 and step % 10000 == 0) or last_step:
                     checkpoint_path = os.path.join(log_dir, f'model_{step:06d}.pt')
                     checkpoint = {
                         'model': raw_model.state_dict(),
@@ -383,7 +378,7 @@ for step in range(max_steps):
                     }
                     torch.save(checkpoint, checkpoint_path)
 
-    if  (step > 0 and step % 100 == 0) or last_step:
+    if  (step > 0 and step % 1000 == 0) or last_step:
         model.eval()
         num_correct_norm = 0
         num_total = 0
@@ -412,7 +407,7 @@ for step in range(max_steps):
             with open(log_file, 'a') as f:
                 f.write(f'{step} hella {acc_norm:.4f}\n')
 
-    if (step > 0 and step % 10 == 0) or last_step:
+    if (step > 0 and step % 1000 == 0) or last_step:
         model.eval()
         num_return_sequences = 4
         max_length = 32
