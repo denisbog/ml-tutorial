@@ -275,9 +275,9 @@ else:
         device = 'mps'
     print(f'using device: {device}')
 
-B, T = 52, 1024
+B, T = 104, 1024
 
-total_batch_size = B * T
+total_batch_size = B * T * 8
 
 assert total_batch_size % (B * T * ddp_world_size) == 0, 'make sure total_batch_size is divisible by B * T * ddp_world_size'
 grad_accum_steps = total_batch_size // (B * T * ddp_world_size)
@@ -285,8 +285,8 @@ if master_process:
     print(f'total desired batch size: {total_batch_size}')
     print(f'=> calculated gradient accumulation steps: {grad_accum_steps}')
 
-#model = GPT(GPTConfig(vocab_size=50304))
-model = GPT.from_pretrained('gpt2')
+model = GPT(GPTConfig(vocab_size=50304))
+#model = GPT.from_pretrained('gpt2')
 
 model.to(device)
 model = torch.compile(model)
@@ -468,4 +468,4 @@ for step in range(max_steps):
 if ddp:
     destroy_process_group()
 
-## torchrun --standalone --nproc_per_node=1 gpt2-train.py
+# torchrun --standalone --nproc_per_node=8 gpt2-train-edu.py
